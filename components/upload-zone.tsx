@@ -45,8 +45,8 @@ export default function UploadZone({ onFileSelect }: Props) {
         border-2 border-dashed rounded-xl p-10 text-center cursor-pointer
         transition-all duration-200
         ${isDragging
-          ? "border-blue-500 bg-blue-50"
-          : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"}
+         ? "border-cyan-400 bg-cyan-950/30"
+         : "border-slate-600 hover:border-cyan-500 hover:bg-cyan-950/20"}
       `}
     >
       <input
