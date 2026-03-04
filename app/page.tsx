@@ -15,6 +15,7 @@ export default function Home() {
   const [jobDescription, setJobDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [language, setLanguage] = useState<"uk" | "en" | "auto">("auto");
 
   const canSubmit = file && jobDescription.trim().length > 20;
 
@@ -27,6 +28,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("jobDescription", jobDescription);
+      formData.append("language", language);
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -66,10 +68,31 @@ export default function Home() {
         </div>
 
         {/* Two columns */}
-        <div className="flex gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
 
           {/* Left — inputs */}
-          <div className="w-115 shrink-0 space-y-6">
+          <div className="w-full lg:w-[460px] lg:shrink-0 space-y-6">
+
+            {/* Language toggle */}
+<div className="flex items-center gap-2">
+  <span className="text-slate-400 text-sm">Мова результату:</span>
+  <div className="flex rounded-lg border border-slate-700 overflow-hidden">
+    {(["auto", "uk", "en"] as const).map((lang) => (
+      <button
+  key={lang}
+  onClick={() => !file && setLanguage(lang)}
+  disabled={!!file}
+  className={`px-3 py-1.5 text-sm transition-colors ${
+    language === lang
+      ? "bg-cyan-500 text-slate-900 font-semibold"
+      : "text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+  } ${file ? "opacity-50 cursor-not-allowed" : ""}`}
+>
+        {lang === "auto" ? "Auto" : lang === "uk" ? "🇺🇦 UA" : "🇬🇧 EN"}
+      </button>
+    ))}
+  </div>
+</div>
 
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
@@ -113,7 +136,7 @@ export default function Home() {
           </div>
 
           {/* Right — results */}
-          <div className="flex-1 min-h-100">
+          <div className="w-full min-h-[400px]">
            {result ? (
                 <ResultsCard result={result} />
                     ) : isLoading ? (
