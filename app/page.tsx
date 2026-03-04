@@ -14,11 +14,34 @@ export default function Home() {
   const canSubmit = file && jobDescription.trim().length > 20;
 
   async function handleAnalyze() {
-    if (!canSubmit) return;
-    setIsLoading(true);
-    // API call — додамо завтра
-    setTimeout(() => setIsLoading(false), 2000);
+  if (!canSubmit || !file) return;
+  setIsLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("jobDescription", jobDescription);
+
+    const res = await fetch("/api/analyze", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error ?? "Щось пішло не так");
+      return;
+    }
+
+    console.log("Результат:", data);
+    alert(`Скор: ${data.score}/100`); // тимчасово, завтра зробимо UI
+  } catch (e) {
+    alert("Помилка з'єднання");
+  } finally {
+    setIsLoading(false);
   }
+}
 
   return (
     <main className="min-h-screen bg-slate-50 py-12 px-4">

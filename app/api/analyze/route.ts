@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 import { extractTextFromPdf } from "@/lib/parse-pdf";
-import { AnalyzeRequest, AnalysisResult } from "@/types";
+import { AnalysisResult } from "@/types";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 export async function POST(req: NextRequest) {
@@ -20,20 +20,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Конвертуємо файл в Buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
-    // Витягуємо текст з PDF
     const resumeText = await extractTextFromPdf(buffer);
 
-    // Запит до OpenAI
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
-          content: `Ти експерт з HR та кар'єрного розвитку. 
+          content: `Ти експерт з HR та кар'єрного розвитку.
 Аналізуй резюме відносно вакансії і повертай ТІЛЬКИ валідний JSON без жодного тексту навколо.`,
         },
         {
@@ -59,9 +55,8 @@ ${jobDescription}
     });
 
     const raw = completion.choices[0].message.content ?? "";
-
-    // Парсимо JSON відповідь
-    const result: AnalysisResult = JSON.parse(raw);
+    const cleaned = raw.replace(/```json|```/g, "").trim();
+    const result: AnalysisResult = JSON.parse(cleaned);
 
     return NextResponse.json(result);
   } catch (error) {

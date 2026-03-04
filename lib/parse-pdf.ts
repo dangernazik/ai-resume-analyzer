@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const pdf = require("pdf-parse");
+const pdf = require("pdf-parse-new");
 
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   const data = await pdf(buffer);
