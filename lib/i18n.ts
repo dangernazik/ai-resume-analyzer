@@ -1,0 +1,60 @@
+export const translations = {
+  uk: {
+    title: "AI Resume Analyzer",
+    subtitle: "Завантаж резюме, вкажи вакансію — отримай детальний аналіз від AI",
+    step1: "1. Завантаж резюме (PDF)",
+    step2: "2. Встав опис вакансії",
+    placeholder: "Встав сюди текст вакансії з DOU, LinkedIn або іншого сайту...",
+    analyzeBtn: "Аналізувати резюме 🚀",
+    analyzingBtn: "Аналізуємо... ⏳",
+    resultPlaceholder: "Результат аналізу з'явиться тут",
+    languageLabel: "Мова результату:",
+    characters: "символів",
+    tooShort: "— занадто мало",
+    uploadDrag: "Перетягни PDF або клікни",
+    uploadSize: "Максимум 5MB",
+    uploadChange: "Клікни щоб змінити файл",
+    uploadRemove: "✕ Видалити файл",
+    uploadOnlyPdf: "Тільки PDF файли!",
+    uploadTooBig: "Файл занадто великий. Максимум 5MB",
+    resetBtn: "↩ Аналізувати інше резюме",
+    score: "Загальний скор",
+    outOf: "зі 100",
+    strengths: "✅ Сильні сторони",
+    weaknesses: "❌ Що не вистачає",
+    tips: "💡 Поради",
+  },
+  en: {
+    title: "AI Resume Analyzer",
+    subtitle: "Upload your resume, paste the job description — get a detailed AI analysis",
+    step1: "1. Upload resume (PDF)",
+    step2: "2. Paste job description",
+    placeholder: "Paste the job description from LinkedIn, Indeed or any other source...",
+    analyzeBtn: "Analyze resume 🚀",
+    analyzingBtn: "Analyzing... ⏳",
+    resultPlaceholder: "Analysis result will appear here",
+    languageLabel: "Result language:",
+    characters: "characters",
+    tooShort: "— too short",
+    uploadDrag: "Drag PDF here or click",
+    uploadSize: "Maximum 5MB",
+    uploadChange: "Click to change file",
+    uploadRemove: "✕ Remove file",
+    uploadOnlyPdf: "PDF files only!",
+    uploadTooBig: "File is too large. Maximum 5MB",
+    resetBtn: "↩ Analyze another resume",
+    score: "Overall score",
+    outOf: "out of 100",
+    strengths: "✅ Strengths",
+    weaknesses: "❌ What's missing",
+    tips: "💡 Tips",
+  },
+  auto: null,
+} as const;
+
+export type Lang = "uk" | "en" | "auto";
+
+export function getT(lang: Lang) {
+  if (lang === "auto") return translations.uk;
+  return translations[lang];
+}

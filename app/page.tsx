@@ -9,14 +9,16 @@ import ResultsCard from "@/components/results-card";
 import { AnalysisResult } from "@/types";
 import { toast } from "sonner";
 import ResultsSkeleton from "@/components/results-skeleton";
+import { getT } from "@/lib/i18n";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [language, setLanguage] = useState<"uk" | "en" | "auto">("auto");
+  const [language, setLanguage] = useState<"uk" | "en" | "auto">("uk");
 
+  const t = getT(language === "auto" ? "uk" : language);
   const canSubmit = file && jobDescription.trim().length > 20;
 
   async function handleAnalyze() {
@@ -60,11 +62,11 @@ export default function Home() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold text-white">
-            AI Resume Analyzer
-          </h1>
-          <p className="text-slate-400">
-            Завантаж резюме, вкажи вакансію — отримай детальний аналіз від AI
-          </p>
+  {t.title}
+</h1>
+<p className="text-slate-400">
+  {t.subtitle}
+</p>
         </div>
 
         {/* Two columns */}
@@ -75,9 +77,9 @@ export default function Home() {
 
             {/* Language toggle */}
 <div className="flex items-center gap-2">
-  <span className="text-slate-400 text-sm">Мова результату:</span>
+  <span className="text-slate-400 text-sm">{t.languageLabel}</span>
   <div className="flex rounded-lg border border-slate-700 overflow-hidden">
-    {(["auto", "uk", "en"] as const).map((lang) => (
+    {(["uk", "en"] as const).map((lang) => (
       <button
   key={lang}
   onClick={() => !file && setLanguage(lang)}
@@ -88,7 +90,7 @@ export default function Home() {
       : "text-slate-400 hover:text-slate-200 hover:bg-slate-700"
   } ${file ? "opacity-50 cursor-not-allowed" : ""}`}
 >
-        {lang === "auto" ? "Auto" : lang === "uk" ? "🇺🇦 UA" : "🇬🇧 EN"}
+        {lang === "uk" ? "🇺🇦 UA" : "🇬🇧 EN"}
       </button>
     ))}
   </div>
@@ -97,31 +99,31 @@ export default function Home() {
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-slate-200 text-lg">
-                  1. Завантаж резюме (PDF)
-                </CardTitle>
+  {t.step1}
+</CardTitle>
               </CardHeader>
               <CardContent>
-                <UploadZone onFileSelect={setFile} />
+                <UploadZone onFileSelect={setFile} lang={language} />
               </CardContent>
             </Card>
 
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-slate-200 text-lg">
-                  2. Встав опис вакансії
-                </CardTitle>
+  {t.step2}
+</CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
-                  placeholder="Встав сюди текст вакансії з DOU, LinkedIn або іншого сайту..."
+  placeholder={t.placeholder}
                   className="min-h-40 resize-none bg-slate-900 border-slate-600 text-slate-200 placeholder:text-slate-500 focus:border-cyan-400 focus:ring-cyan-400"
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                 />
                 <p className="text-xs text-slate-500 mt-2">
-                  {jobDescription.length} символів
-                  {jobDescription.length < 20 && jobDescription.length > 0 && " — занадто мало"}
-                </p>
+  {jobDescription.length} {t.characters}
+  {jobDescription.length < 20 && jobDescription.length > 0 && ` ${t.tooShort}`}
+</p>
               </CardContent>
             </Card>
 
@@ -130,7 +132,7 @@ export default function Home() {
               disabled={!canSubmit || isLoading}
               className="w-full h-12 text-base bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold disabled:opacity-40"
             >
-              {isLoading ? "Аналізуємо... ⏳" : "Аналізувати резюме 🚀"}
+              {isLoading ? t.analyzingBtn : t.analyzeBtn}
             </Button>
 
           </div>
@@ -138,7 +140,7 @@ export default function Home() {
           {/* Right — results */}
           <div className="w-full min-h-[400px]">
            {result ? (
-                <ResultsCard result={result} />
+                <ResultsCard result={result} lang={language} />
                     ) : isLoading ? (
                       <ResultsSkeleton />
                     ) : (
@@ -146,8 +148,8 @@ export default function Home() {
                 <div className="space-y-3">
                   <div className="text-5xl">🤖</div>
                   <p className="text-slate-500 text-sm">
-                    Результат аналізу з&apos;явиться тут
-                  </p>
+  {t.resultPlaceholder}
+</p>
                 </div>
               </div>
             )}

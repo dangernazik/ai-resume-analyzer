@@ -2,25 +2,30 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { getT } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 
 type Props = {
   onFileSelect: (file: File | null) => void;
+  lang: Lang;
 };
 
-export default function UploadZone({ onFileSelect }: Props) {
+export default function UploadZone({ onFileSelect, lang }: Props) {
+  const t = getT(lang === "auto" ? "uk" : lang);
+
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFile(file: File) {
     if (file.type !== "application/pdf") {
-      alert("Only PDF files!");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File is too large. Maximum 5MB");
-      return;
-    }
+  alert(t.uploadOnlyPdf);
+  return;
+}
+if (file.size > 5 * 1024 * 1024) {
+  alert(t.uploadTooBig);
+  return;
+}
     setFileName(file.name);
     onFileSelect(file);
   }
@@ -63,7 +68,7 @@ export default function UploadZone({ onFileSelect }: Props) {
       {fileName ? (
   <div className="space-y-2">
     <div className="text-3xl">📄</div>
-    <p className="font-medium text-slate-700">{fileName}</p> 
+    <p className="font-medium text-slate-700">{fileName}</p>
     <button
       onClick={(e) => {
         e.stopPropagation();
@@ -73,16 +78,16 @@ export default function UploadZone({ onFileSelect }: Props) {
       }}
       className="text-sm text-red-400 hover:text-red-600 transition-colors"
     >
-      ✕ Delete file
+      {t.uploadRemove}
     </button>
   </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="text-3xl">⬆️</div>
-          <p className="font-medium text-slate-700">Drag and drop PDF or click</p>
-          <p className="text-sm text-slate-400">Maximum 5MB</p>
-        </div>
-      )}
+) : (
+  <div className="space-y-2">
+    <div className="text-3xl">⬆️</div>
+    <p className="font-medium text-slate-200">{t.uploadDrag}</p>
+    <p className="text-sm text-slate-400">{t.uploadSize}</p>
+  </div>
+)}
     </div>
   );
 }
